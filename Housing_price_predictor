@@ -1,0 +1,30 @@
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
+le=LabelEncoder()
+df=pd.read_csv("C:/Users/anike/Downloads/Housing.csv")
+df['mainroad']=le.fit_transform(df['mainroad'])
+df['guestroom']=le.fit_transform(df['guestroom'])
+df['basement']=le.fit_transform(df['basement'])
+df['hotwaterheating']=le.fit_transform(df['hotwaterheating'])
+df['airconditioning']=le.fit_transform(df['airconditioning'])
+df['parking']=le.fit_transform(df['parking'])
+df['prefarea']=le.fit_transform(df['prefarea'])
+df['furnishingstatus']=le.fit_transform(df['furnishingstatus'])
+df=df.astype('float32')
+x=df[['area','bedrooms','bathrooms','stories','mainroad','guestroom','basement','hotwaterheating','airconditioning','parking','prefarea','furnishingstatus']]
+y=df['price']
+x_train,x_test,y_train,y_test= train_test_split(x,y,test_size=.2,random_state=10)
+model=LinearRegression()
+model.fit(x_train,y_train)
+y_pred=model.predict(x_test)
+a=mean_absolute_error(y_test,y_pred)
+print(a)
+b=mean_squared_error(y_test,y_pred)
+print(b)
+c=r2_score(y_test,y_pred)
+print(c)
