@@ -1,0 +1,28 @@
+import requests
+import time
+import csv
+
+# Function to get bitcoin price for a given currency
+def get_bitcoin_price(currency):
+    url = f"https://api.coindesk.com/v1/bpi/currentprice/{currency}.json"
+    response = requests.get(url)
+    data = response.json()
+    return data["bpi"][currency]["rate_float"]
+
+# List of currencies to get bitcoin prices for
+currencies = ["USD", "EUR", "GBP"]
+
+# Create CSV file and write header row
+with open("bitcoin_prices.csv", "w", newline="") as file:
+    writer = csv.writer(file)
+    writer.writerow(["Currency", "Price"])
+
+# Loop to get bitcoin prices and store in CSV file
+while True:
+    with open("bitcoin_prices.csv", "a", newline="") as file:
+        writer = csv.writer(file)
+        for currency in currencies:
+            price = get_bitcoin_price(currency)
+            writer.writerow([currency, price])
+            print(f"{currency}: {price}")
+        time.sleep(2)  # Wait for 2 seconds before getting updated prices
