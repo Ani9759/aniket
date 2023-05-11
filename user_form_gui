@@ -1,0 +1,55 @@
+from tkinter import *
+import mysql.connector as connector
+
+
+class employee(Frame):
+    def __init__(self,master):
+        super().__init__(master)
+        self.l1=Label(self,text="emp_id: ")
+        self.l2=Label(self,text="emp_name: ")
+        self.l3=Label(self,text="address: ")
+        self.l4=Label(self,text="income: ")
+        self.e1=Entry(self)
+        self.e2=Entry(self)
+        self.e3=Entry(self)
+        self.e4=Entry(self)
+        self.b1=Button(text="SAVE", command=self.save)
+        self.b2=Button(text="exit", command=self.destroy)
+        self.rowconfigure(index=0, pad=10)
+        self.rowconfigure(index=1, pad=10)
+        self.rowconfigure(index=2, pad=10)
+        self.rowconfigure(index=3, pad=10)
+        self.rowconfigure(index=4, pad=10)
+        self.columnconfigure(index=0,pad=10)
+        self.columnconfigure(index=1,pad=10)
+        self.l1.grid(row=0,column=0)
+        self.l2.grid(row=1,column=0)
+        self.l3.grid(row=2,column=0)
+        self.l4.grid(row=3,column=0)
+        self.e1.grid(row=0,column=1)
+        self.e2.grid(row=1,column=1)
+        self.e3.grid(row=2,column=1)
+        self.e4.grid(row=3,column=1)
+        self.b1.grid(row=4,column=0)
+        self.b2.grid(row=4,column=1)
+        self.grid(column=10,row=10)
+    def save(self):
+        con=connector.connect(user="root", password="@Mittal9759",host="localhost", db="aniket")
+        cur=con.cursor()
+        employee_no=self.e1.get()
+        cur.execute(f"select * from employe_info where aniket_id={employee_no} ")
+        if cur.fetchall:
+            print("duplicate entry!")
+        else:
+            aniket_name=self.e2.get()
+            aniket_address=self.e3.get()
+            income=self.e4.get()
+            cur.execute(f"insert into employe_info values({employee_no},{aniket_name},{aniket_address},{income})")
+            con.commit()
+            con.close
+
+root=Tk()
+ob=employee(root)
+root.title('company detail')
+root.mainloop()
+
