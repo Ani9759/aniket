@@ -1,0 +1,60 @@
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import classification_report,accuracy_score
+import matplotlib.pyplot as plt
+import numpy as np
+df=pd.read_csv("C:/Users/BME/Downloads/adult (1).csv")
+df.head()
+null_columns = df.columns[df.isnull().any()]
+non_null_columns=df.columns[~df.isnull().any()]
+print(f"null columns in data are:{null_columns}")
+print(f"non null columns in data are:{non_null_columns}")
+df.info()
+df["workclass"].value_counts()
+df["occupation"].value_counts()
+df["workclass"]=df["workclass"].replace(["?"],"Private")
+df["education"].value_counts()
+df["marital.status"].value_counts()
+df["relationship"].value_counts()
+df["race"].value_counts()
+df["sex"].value_counts()
+df["native.country"].value_counts()
+df["income"].value_counts()
+le=LabelEncoder()
+df["workclass"]=le.fit_transform(df["workclass"])
+df["marital.status"]=le.fit_transform(df["marital.status"])
+df["relationship"]=le.fit_transform(df["relationship"])
+df["race"]=le.fit_transform(df["race"])
+df["sex"]=le.fit_transform(df["sex"])
+df["income"]=le.fit_transform(df["income"])
+df.info()
+df.drop(["native.country","occupation","education"],axis=1,inplace=True)
+x=df.drop("income",axis=1)
+y=df["income"]
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=.33,random_state=90)
+accuracy=0
+accuracy_graph=[]
+n_neighbour=1
+for i in range(1,40):
+    kn=KNeighborsClassifier(n_neighbors=i)
+    kn.fit(x_train,y_train)
+    pred=kn.predict(x_test)
+    a_score=accuracy_score(y_test,pred)
+    accuracy_graph.append(a_score)
+    if a_score>accuracy:
+        n_neighbour+=1
+        accuracy=a_score
+model=KNeighborsClassifier(n_neighbors=n_neighbour)
+model.fit(x_train,y_train)
+y_pred=model.predict(x_test)
+a=accuracy_score(y_test,y_pred)
+print(a)
+
+b=np.arange(1,40)
+plt.plot(b,accuracy_graph)
+plt.xlabel("Neighbours value")
+plt.ylabel("Accuracy Score")
+plt.title("Accuracy Vs Neighbours Value")
+plt.show();
